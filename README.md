@@ -1,74 +1,65 @@
-# Welcome to your Lovable project
+# Code Gatekeeper
 
-## Project info
+Code Gatekeeper is a conversational AI platform that transforms how developers learn and retain understanding of AI-generated code—addressing the critical **"AI Paradox"** where increased code production leads to decreased comprehension and critical thinking skills.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+---
 
-## How can I edit this code?
+## 🚀 Core Functionality & Working Prototype
 
-There are several ways of editing your application.
+Our fully functional prototype features two sophisticated ElevenLabs Conversational Agents:
 
-**Use Lovable**
+### **1. Voice Quiz Agent**
+Acts as a “code gatekeeper” that verbally quizzes developers on AI-generated code before allowing approval.  
+It asks probing questions about:
+- Logic  
+- Edge cases  
+- Implementation details  
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### **2. Voice Tutor Agent**
+Provides personalized, topic-specific voice lectures on code concepts, adapting explanations based on the submitted code context.
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## 🧠 Technical Complexity & Multimodal Orchestration
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **ElevenLabs Conversational AI** — Real‑time voice‑to‑voice interaction with dynamic prompt injection  
+- **Claude AI (Anthropic)** — Intelligent code analysis, question generation, and educational content creation  
+- **Clerk Authentication** — Secure user management and session handling  
+- **React + TypeScript** — Modern, type‑safe frontend architecture  
+- **Dynamic Prompt Engineering** — Runtime context injection for personalized agent behavior  
 
-The only requirement is having Bun installed - [install Bun](https://bun.sh/docs/installation)
+---
 
-Follow these steps:
+## 💡 Innovation & Creativity
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Unlike traditional code review tools, Code Gatekeeper uses **voice-based Socratic dialogue** to ensure developers genuinely understand code before shipping.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+This groundbreaking approach:
 
-# Step 3: Install the necessary dependencies.
-bun install
+- Forces **active recall** through verbal explanation  
+- Creates **accountability** in AI-assisted development  
+- Preserves **human critical thinking** skills in the age of AI  
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-bun run dev
-```
+---
 
-**Edit a file directly in GitHub**
+## 🌍 Real-World Impact
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Addressing a **$50B+ problem** in enterprise software: technical debt from poorly understood code.
 
-**Use GitHub Codespaces**
+Scalable to:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- Engineering teams requiring code comprehension gates  
+- Educational institutions teaching programming  
+- Bootcamps ensuring genuine skill development  
+- Enterprise compliance environments requiring code understanding audits  
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+## 🎤 Theme Alignment
 
-- Bun 1.3.4
-- Vite 7.2.7
-- TypeScript
-- React 19.2.1
-- shadcn-ui
-- Tailwind CSS
+Code Gatekeeper **exemplifies conversational agents** by unifying voice, browser, and AI APIs into a cohesive autonomous assistant that listens, reasons, responds, and evolves—perfectly embodying the hackathon mission to:
 
-## How can I deploy this project?
+> **“Build something that talks back.”**
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
