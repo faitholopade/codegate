@@ -2,12 +2,14 @@ import { useState, useCallback } from 'react';
 import { FeatureInput } from '@/components/FeatureInput';
 import { CodeViewer } from '@/components/CodeViewer';
 import { VoiceQuizPanel } from '@/components/VoiceQuizPanel';
+import { VoiceTutorPanel } from '@/components/VoiceTutorPanel';
 import { ApprovalPanel } from '@/components/ApprovalPanel';
 import { ConfigBanner } from '@/components/ConfigBanner';
 import { UserNav } from '@/components/AuthGuard';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { QuizStatus, GeneratedCode } from '@/types';
 import { generateCode } from '@/services/codeGeneration';
-import { Shield, Github, Zap } from 'lucide-react';
+import { Shield, Github, Zap, GraduationCap, ShieldQuestion } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Index() {
@@ -15,6 +17,7 @@ export default function Index() {
   const [generatedCode, setGeneratedCode] = useState<GeneratedCode | null>(null);
   const [finalScore, setFinalScore] = useState(0);
   const [quizPassed, setQuizPassed] = useState(false);
+  const [activeTab, setActiveTab] = useState<'quiz' | 'tutor'>('quiz');
 
   const handleGenerate = useCallback(async (prompt: string) => {
     setStatus('generating');
@@ -129,15 +132,34 @@ export default function Index() {
             )}
           </div>
 
-          {/* Right Panel - Voice Quiz */}
-          <div className="h-full">
-            <VoiceQuizPanel
-              code={generatedCode?.code || ''}
-              blocks={generatedCode?.blocks || []}
-              status={status}
-              onStatusChange={setStatus}
-              onQuizComplete={handleQuizComplete}
-            />
+          {/* Right Panel - Voice Quiz / Tutor Tabs */}
+          <div className="h-full flex flex-col">
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'quiz' | 'tutor')} className="h-full flex flex-col">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="quiz" className="flex items-center gap-2">
+                  <ShieldQuestion className="w-4 h-4" />
+                  Code Quiz
+                </TabsTrigger>
+                <TabsTrigger value="tutor" className="flex items-center gap-2">
+                  <GraduationCap className="w-4 h-4" />
+                  Voice Tutor
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="quiz" className="flex-1 mt-0">
+                <VoiceQuizPanel
+                  code={generatedCode?.code || ''}
+                  blocks={generatedCode?.blocks || []}
+                  status={status}
+                  onStatusChange={setStatus}
+                  onQuizComplete={handleQuizComplete}
+                />
+              </TabsContent>
+              
+              <TabsContent value="tutor" className="flex-1 mt-0">
+                <VoiceTutorPanel />
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </main>

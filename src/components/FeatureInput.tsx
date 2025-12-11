@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { VoiceInput } from '@/components/VoiceInput';
 import { Sparkles, Loader2 } from 'lucide-react';
 
 interface FeatureInputProps {
@@ -31,13 +32,21 @@ export function FeatureInput({ onGenerate, isGenerating, disabled }: FeatureInpu
         <label className="text-sm font-medium text-muted-foreground">
           Describe the feature you want to build
         </label>
-        <Textarea
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="e.g., Create a user authentication system with login, signup, and password reset..."
-          className="min-h-[120px] bg-card border-border focus:border-primary resize-none font-mono text-sm"
-          disabled={isGenerating || disabled}
-        />
+        <div className="relative">
+          <Textarea
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="e.g., Create a user authentication system with login, signup, and password reset..."
+            className="min-h-[120px] bg-card border-border focus:border-primary resize-none font-mono text-sm pr-12"
+            disabled={isGenerating || disabled}
+          />
+          <div className="absolute right-2 top-2">
+            <VoiceInput 
+              onTranscript={(text) => setPrompt(prev => prev ? `${prev} ${text}` : text)}
+              disabled={isGenerating || disabled}
+            />
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-2">
