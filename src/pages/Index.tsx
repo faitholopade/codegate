@@ -4,6 +4,7 @@ import { CodeViewer } from '@/components/CodeViewer';
 import { VoiceQuizPanel } from '@/components/VoiceQuizPanel';
 import { ApprovalPanel } from '@/components/ApprovalPanel';
 import { ConfigBanner } from '@/components/ConfigBanner';
+import { UserNav } from '@/components/AuthGuard';
 import { QuizStatus, GeneratedCode } from '@/types';
 import { generateCode } from '@/services/codeGeneration';
 import { Shield, Github, Zap } from 'lucide-react';
@@ -68,7 +69,7 @@ export default function Index() {
             <div className="flex items-center gap-4">
               <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
                 <Zap className="w-4 h-4 text-primary" />
-                <span>Powered by ElevenLabs & OpenAI</span>
+                <span>Powered by ElevenLabs & Claude</span>
               </div>
               <a
                 href="https://github.com"
@@ -78,6 +79,7 @@ export default function Index() {
               >
                 <Github className="w-5 h-5" />
               </a>
+              <UserNav />
             </div>
           </div>
         </div>
