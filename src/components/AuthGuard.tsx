@@ -36,6 +36,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
   );
 }
 
+// Only use Clerk components when provider exists
 export function UserNav({ isAuthEnabled }: { isAuthEnabled: boolean }) {
   if (!isAuthEnabled) return null;
   

@@ -5,7 +5,7 @@ import { VoiceQuizPanel } from '@/components/VoiceQuizPanel';
 import { VoiceTutorPanel } from '@/components/VoiceTutorPanel';
 import { ApprovalPanel } from '@/components/ApprovalPanel';
 import { ConfigBanner } from '@/components/ConfigBanner';
-import { UserNav } from '@/components/AuthGuard';
+// UserNav import removed - only use when ClerkProvider is available
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { QuizStatus, GeneratedCode } from '@/types';
 import { generateCode } from '@/services/codeGeneration';
@@ -89,7 +89,7 @@ export default function Index() {
               >
                 <Github className="w-5 h-5" />
               </a>
-              <UserNav isAuthEnabled={!!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY} />
+              {/* UserNav rendered via App.tsx when Clerk is enabled */}
             </div>
           </div>
         </div>
