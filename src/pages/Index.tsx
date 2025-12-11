@@ -37,7 +37,7 @@ export default function Index() {
       toast.success('Code generated! Ready for the quiz.');
     } catch (error) {
       console.error('Generation failed:', error);
-      toast.error('Failed to generate code. Check your Anthropic API key.');
+      toast.error('Failed to generate code. Check your OpenAI API key.');
       setStatus('idle');
     }
   }, []);
