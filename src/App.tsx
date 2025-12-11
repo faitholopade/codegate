@@ -12,9 +12,12 @@ const queryClient = new QueryClient();
 
 const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
+// Validate that the key is a publishable key (starts with pk_)
+const isValidClerkKey = CLERK_PUBLISHABLE_KEY && CLERK_PUBLISHABLE_KEY.startsWith('pk_');
+
 const App = () => {
-  // If Clerk key is not configured, render the app without auth
-  if (!CLERK_PUBLISHABLE_KEY) {
+  // If Clerk key is not configured or invalid, render the app without auth
+  if (!isValidClerkKey) {
     return (
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
