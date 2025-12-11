@@ -2,31 +2,24 @@ import { useState, useCallback } from 'react';
 import { useConversation } from '@elevenlabs/react';
 import { Button } from '@/components/ui/button';
 import { TranscriptDisplay } from '@/components/TranscriptDisplay';
+import { TopicSelector } from './TopicSelector';
 import { API_CONFIG, isConfigured } from '@/config/api';
 import { GraduationCap, Mic, MicOff, Phone, PhoneOff } from 'lucide-react';
 import { TranscriptEntry } from '@/types';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { generateTutorPrompt } from '@/services/voiceAgent';
 
 interface VoiceTutorPanelProps {
-  topic?: string;
+  code?: string;
+  topics?: string[];
   onClose?: () => void;
 }
 
-const TUTOR_PROMPT = `You are a friendly and knowledgeable programming tutor. Your role is to:
-
-1. Help users learn programming concepts in an engaging, conversational way
-2. Explain complex topics simply using analogies and examples
-3. Answer questions about any programming language, framework, or concept
-4. Provide code examples when helpful (describe them verbally)
-5. Encourage curiosity and experimentation
-6. Be patient and supportive, especially with beginners
-
-Start by asking what programming topic they'd like to learn about today. Be conversational and friendly!`;
-
-export function VoiceTutorPanel({ topic, onClose }: VoiceTutorPanelProps) {
+export function VoiceTutorPanel({ code = '', topics = [], onClose }: VoiceTutorPanelProps) {
   const [transcript, setTranscript] = useState<TranscriptEntry[]>([]);
   const [isMuted, setIsMuted] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
 
   const conversation = useConversation({
     onMessage: (message) => {
@@ -53,10 +46,14 @@ export function VoiceTutorPanel({ topic, onClose }: VoiceTutorPanelProps) {
       return;
     }
 
+    if (!selectedTopic && topics.length > 0) {
+      toast.error('Please select a topic to learn about.');
+      return;
+    }
+
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
 
-      // Get signed URL from ElevenLabs
       const response = await fetch(
         `https://api.elevenlabs.io/v1/convai/conversation/get-signed-url?agent_id=${API_CONFIG.ELEVENLABS_AGENT_ID}`,
         {
@@ -68,16 +65,17 @@ export function VoiceTutorPanel({ topic, onClose }: VoiceTutorPanelProps) {
 
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error('Invalid Agent ID. Create an agent at elevenlabs.io/app/conversational-ai and update VITE_ELEVENLABS_AGENT_ID');
+          throw new Error('Invalid Agent ID. Create an agent at elevenlabs.io/app/conversational-ai');
         }
         throw new Error('Failed to connect to ElevenLabs');
       }
 
       const { signed_url } = await response.json();
 
-      const contextPrompt = topic 
-        ? `${TUTOR_PROMPT}\n\nThe user wants to learn about: ${topic}. Start by introducing yourself and then dive into this topic.`
-        : TUTOR_PROMPT;
+      // Generate context-aware prompt based on code and selected topic
+      const contextPrompt = selectedTopic && code
+        ? generateTutorPrompt(code, selectedTopic)
+        : `You are a friendly programming tutor. The student wants to learn about ${selectedTopic || 'programming'}. Give a short, engaging lecture about this topic, then ask if they have questions.`;
 
       await conversation.startSession({
         signedUrl: signed_url,
@@ -86,17 +84,20 @@ export function VoiceTutorPanel({ topic, onClose }: VoiceTutorPanelProps) {
             prompt: {
               prompt: contextPrompt,
             },
+            firstMessage: selectedTopic 
+              ? `Let me teach you about ${selectedTopic}. Looking at your code...`
+              : "Hello! I'm your programming tutor. What would you like to learn about today?",
           },
         },
       });
 
-      addTranscriptEntry("Hello! I'm your programming tutor. What would you like to learn about today?", 'agent');
+      setTranscript([]);
       toast.success('Voice tutor connected!');
     } catch (error) {
       console.error('Failed to start tutor:', error);
       toast.error(`Failed to start: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-  }, [conversation, addTranscriptEntry, topic]);
+  }, [conversation, selectedTopic, topics.length, code]);
 
   const endTutor = useCallback(async () => {
     await conversation.endSession();
@@ -136,6 +137,15 @@ export function VoiceTutorPanel({ topic, onClose }: VoiceTutorPanelProps) {
           </div>
         </div>
       </div>
+
+      {/* Topic Selection */}
+      {!isConnected && topics.length > 0 && (
+        <TopicSelector
+          topics={topics}
+          selectedTopic={selectedTopic}
+          onSelectTopic={setSelectedTopic}
+        />
+      )}
 
       {/* Transcript */}
       <div className="flex-1 overflow-hidden">

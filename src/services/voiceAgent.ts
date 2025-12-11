@@ -84,16 +84,18 @@ export const voiceAgentService = new VoiceAgentService();
 
 // Generate the context prompt for the voice agent based on code
 export function generateAgentPrompt(code: string, blocks: { question: string; explanation: string }[]): string {
-  const questions = blocks.map((b, i) => `Question ${i + 1}: ${b.question}`).join('\n');
+  const questions = blocks.map((b, i) => `Question ${i + 1}: ${b.question}\nExpected understanding: ${b.explanation}`).join('\n\n');
   
   return `You are the Code Gatekeeper, a strict but fair code reviewer who tests developers' understanding before allowing code to ship.
 
+CRITICAL: You must actually ASSESS the user's answers against the expected understanding provided below. 
+
 Your role:
-1. You have code that needs to be reviewed before it can be shipped
-2. You must ask the developer questions to verify they understand the code
-3. Be conversational but focused - ask one question at a time
-4. Listen to their explanation and evaluate if they truly understand
-5. If they struggle, offer hints but note it affects their score
+1. Ask ONE question at a time about the code
+2. Listen carefully to their answer
+3. Evaluate if they demonstrated understanding based on the expected answer
+4. Give specific feedback: "Correct!" or "Not quite - let me explain..."
+5. Track their score mentally (correct answers vs total)
 6. Be encouraging but maintain high standards
 
 The code being reviewed:
@@ -101,13 +103,63 @@ The code being reviewed:
 ${code}
 \`\`\`
 
-Questions to ask (adapt based on conversation):
+Questions to ask with expected answers:
 ${questions}
 
-Start by introducing yourself briefly, then ask the first question. After each answer, acknowledge their response and either:
-- Move to the next question if they demonstrated understanding
-- Ask a follow-up if their answer was incomplete
-- Provide a hint if they're stuck
+ASSESSMENT RULES:
+- If they explain the concept correctly (even with different words), say "Correct!" or "Good job!"
+- If they're partially right, acknowledge what they got right and clarify what's missing
+- If they're wrong, say "Not quite" and briefly explain the correct answer
+- After 3-5 questions, give a final verdict
 
-At the end, summarize their performance. Say "PASS" if they demonstrated good understanding, or "FAIL" if they couldn't explain key concepts.`;
+Start by saying: "I'm the Code Gatekeeper. Before this code ships, I need to verify you understand it. Let me ask you a few questions. Here's the first one..."
+
+At the end, summarize:
+- How many they got right
+- Say "PASS - you clearly understand this code!" if they got most right
+- Say "FAIL - let's review some concepts" if they struggled`;
+}
+
+// Extract topics from code for the tutor
+export function extractTopicsFromCode(code: string): string[] {
+  const topics: string[] = [];
+  
+  // Detect common patterns and concepts
+  if (code.includes('useState') || code.includes('useEffect')) topics.push('React Hooks');
+  if (code.includes('async') || code.includes('await') || code.includes('Promise')) topics.push('Async/Await & Promises');
+  if (code.includes('fetch') || code.includes('axios')) topics.push('API Calls & HTTP Requests');
+  if (code.includes('map(') || code.includes('filter(') || code.includes('reduce(')) topics.push('Array Methods');
+  if (code.includes('interface') || code.includes(': string') || code.includes(': number')) topics.push('TypeScript Types');
+  if (code.includes('class ')) topics.push('Classes & OOP');
+  if (code.includes('try') && code.includes('catch')) topics.push('Error Handling');
+  if (code.includes('useCallback') || code.includes('useMemo')) topics.push('React Performance Optimization');
+  if (code.includes('useContext') || code.includes('createContext')) topics.push('React Context API');
+  if (code.includes('import') || code.includes('export')) topics.push('ES6 Modules');
+  if (code.includes('const ') || code.includes('let ')) topics.push('Variables & Scope');
+  if (code.includes('=>')) topics.push('Arrow Functions');
+  if (code.includes('...')) topics.push('Spread/Rest Operators');
+  if (code.includes('?.') || code.includes('??')) topics.push('Optional Chaining & Nullish Coalescing');
+  
+  return topics.length > 0 ? topics : ['General JavaScript', 'Code Structure', 'Best Practices'];
+}
+
+// Generate tutor prompt for a specific topic based on code context
+export function generateTutorPrompt(code: string, selectedTopic: string): string {
+  return `You are a friendly programming tutor giving a short lecture about "${selectedTopic}".
+
+CONTEXT: The student is learning from this code example:
+\`\`\`
+${code}
+\`\`\`
+
+YOUR TASK:
+1. Give a 2-3 minute verbal lecture about "${selectedTopic}"
+2. Reference specific parts of the code above as examples
+3. Explain WHY things work the way they do
+4. Use simple analogies when helpful
+5. After explaining, ask if they have any questions
+
+START by saying: "Let me teach you about ${selectedTopic}. Looking at this code..."
+
+Be conversational, engaging, and educational. Pause occasionally to check understanding.`;
 }
