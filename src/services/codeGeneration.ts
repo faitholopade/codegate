@@ -1,60 +1,24 @@
-import { API_CONFIG } from '@/config/api';
-import { GeneratedCode, CodeBlock } from '@/types';
+import { supabase } from '@/integrations/supabase/client';
+import { GeneratedCode } from '@/types';
 
-// Generate code using Claude
+// Generate code using Lovable AI
 export async function generateCode(featurePrompt: string): Promise<GeneratedCode> {
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': API_CONFIG.ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-      'Content-Type': 'application/json',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 4096,
-      messages: [
-        {
-          role: 'user',
-          content: `You are an expert code generator. Generate clean, production-ready code based on the user's feature request.
-          
-Return your response in the following JSON format (and nothing else, just the JSON):
-{
-  "code": "the complete code implementation",
-  "language": "the programming language used",
-  "blocks": [
-    {
-      "id": "block_1",
-      "code": "a logical section of the code",
-      "explanation": "what this section does in 1-2 sentences",
-      "question": "a quiz question to test understanding of this block"
-    }
-  ]
-}
-
-Break the code into 2-4 logical blocks that can be tested for understanding.
-Make questions specific and technical, like:
-- "What happens if the user input is empty?"
-- "How does this function handle errors?"
-- "What security consideration is addressed here?"
-
-Generate code for the following feature: ${featurePrompt}`
-        }
-      ],
-    }),
+  const { data, error } = await supabase.functions.invoke('generate-code', {
+    body: { featurePrompt, action: 'generate' }
   });
 
-  if (!response.ok) {
-    const error = await response.text();
-    console.error('Claude API error:', error);
+  if (error) {
+    console.error('Generate code error:', error);
     throw new Error('Failed to generate code');
   }
 
-  const data = await response.json();
-  const content = data.content[0].text;
+  if (data.error) {
+    throw new Error(data.error);
+  }
+
+  const content = data.content;
   
-  // Parse the JSON from Claude's response
+  // Parse the JSON from the response
   const jsonMatch = content.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
     throw new Error('Failed to parse code generation response');
@@ -72,87 +36,31 @@ Generate code for the following feature: ${featurePrompt}`
   };
 }
 
-// Analyze code blocks for quiz questions
-export async function analyzeCodeBlock(code: string, explanation: string): Promise<string> {
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': API_CONFIG.ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-      'Content-Type': 'application/json',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 256,
-      messages: [
-        {
-          role: 'user',
-          content: `Generate a single, specific technical question to test if a developer understands this code block. The question should be answerable in 1-2 sentences.
-
-Code:
-${code}
-
-Expected understanding:
-${explanation}`
-        }
-      ],
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to analyze code');
-  }
-
-  const data = await response.json();
-  return data.content[0].text;
-}
-
-// Evaluate user's explanation
+// Evaluate user's explanation using Lovable AI
 export async function evaluateExplanation(
   code: string,
   expectedExplanation: string,
   userExplanation: string
 ): Promise<{ score: number; feedback: string; passed: boolean }> {
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': API_CONFIG.ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-      'Content-Type': 'application/json',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 256,
-      messages: [
-        {
-          role: 'user',
-          content: `You are evaluating a developer's understanding of code. Score their explanation from 0-100.
-          
-Return ONLY a JSON object: { "score": number, "feedback": "brief feedback", "passed": boolean }
-
-Pass threshold is 70. Be fair but rigorous - they should demonstrate actual understanding, not just repeat keywords.
-
-Code:
-${code}
-
-Expected understanding:
-${expectedExplanation}
-
-Developer's explanation:
-${userExplanation}`
-        }
-      ],
-    }),
+  const { data, error } = await supabase.functions.invoke('generate-code', {
+    body: { 
+      action: 'evaluate',
+      code,
+      expectedExplanation,
+      userExplanation
+    }
   });
 
-  if (!response.ok) {
+  if (error) {
+    console.error('Evaluate explanation error:', error);
     throw new Error('Failed to evaluate explanation');
   }
 
-  const data = await response.json();
-  const content = data.content[0].text;
+  if (data.error) {
+    throw new Error(data.error);
+  }
+
+  const content = data.content;
   
   // Parse JSON from response
   const jsonMatch = content.match(/\{[\s\S]*\}/);
