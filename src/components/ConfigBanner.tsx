@@ -7,11 +7,10 @@ export function ConfigBanner() {
   const configs = [
     { name: 'ElevenLabs API Key', configured: !!API_CONFIG.ELEVENLABS_API_KEY, url: 'https://elevenlabs.io' },
     { name: 'ElevenLabs Agent ID', configured: !!API_CONFIG.ELEVENLABS_AGENT_ID, url: 'https://elevenlabs.io/conversational-ai' },
-    { name: 'OpenAI API Key', configured: !!API_CONFIG.OPENAI_API_KEY, url: 'https://platform.openai.com/api-keys' },
+    { name: 'Anthropic API Key', configured: !!API_CONFIG.ANTHROPIC_API_KEY, url: 'https://console.anthropic.com' },
   ];
 
   const optional = [
-    { name: 'BLACKBOX API Key', configured: !!API_CONFIG.BLACKBOX_API_KEY },
     { name: 'n8n Webhook URL', configured: !!API_CONFIG.N8N_WEBHOOK_URL },
   ];
 
@@ -69,7 +68,7 @@ export function ConfigBanner() {
         <p className="text-muted-foreground"># .env</p>
         <p>VITE_ELEVENLABS_API_KEY=your_key_here</p>
         <p>VITE_ELEVENLABS_AGENT_ID=your_agent_id</p>
-        <p>VITE_OPENAI_API_KEY=your_key_here</p>
+        <p>VITE_ANTHROPIC_API_KEY=your_key_here</p>
         <p className="text-muted-foreground"># Optional</p>
         <p className="text-muted-foreground">VITE_N8N_WEBHOOK_URL=your_webhook_url</p>
       </div>
