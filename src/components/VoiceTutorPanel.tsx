@@ -22,12 +22,30 @@ export function VoiceTutorPanel({ code = '', topics = [], onClose }: VoiceTutorP
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
 
   const conversation = useConversation({
-    onMessage: (message) => {
-      console.log('Tutor message:', message);
+    onConnect: () => {
+      console.log('Tutor connected');
+      addTranscriptEntry("Connected! The tutor should start speaking...", 'agent');
     },
-    onError: (error) => {
+    onMessage: (message: any) => {
+      console.log('Tutor message:', JSON.stringify(message, null, 2));
+      
+      // Handle different ElevenLabs event types
+      if (message.type === 'user_transcript' || message.type === 'transcript') {
+        const text = message.user_transcription_event?.user_transcript || message.text || message.message;
+        if (text) addTranscriptEntry(text, 'user');
+      } else if (message.type === 'agent_response') {
+        const text = message.agent_response_event?.agent_response || message.text || message.message;
+        if (text) addTranscriptEntry(text, 'agent');
+      } else if (message.source && message.message) {
+        const role = message.source === 'ai' ? 'agent' : 'user';
+        addTranscriptEntry(message.message, role);
+      }
+    },
+    onError: (error: any) => {
       console.error('Tutor error:', error);
-      toast.error('Voice tutor error. Please try again.');
+      const errorMsg = typeof error === 'string' ? error : error?.message || 'Connection failed';
+      toast.error(`Voice tutor error: ${errorMsg}`);
+      addTranscriptEntry(`Error: ${errorMsg}. Make sure your ElevenLabs agent has "Override" enabled.`, 'agent');
     },
   });
 
