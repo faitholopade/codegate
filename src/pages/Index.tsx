@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { FeatureInput } from '@/components/FeatureInput';
 import { CodeViewer } from '@/components/CodeViewer';
 import { VoiceQuizPanel } from '@/components/VoiceQuizPanel';
@@ -9,6 +9,7 @@ import { UserNav } from '@/components/AuthGuard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { QuizStatus, GeneratedCode } from '@/types';
 import { generateCode } from '@/services/codeGeneration';
+import { extractTopicsFromCode } from '@/services/voiceAgent';
 import { Shield, Github, Zap, GraduationCap, ShieldQuestion } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -18,6 +19,12 @@ export default function Index() {
   const [finalScore, setFinalScore] = useState(0);
   const [quizPassed, setQuizPassed] = useState(false);
   const [activeTab, setActiveTab] = useState<'quiz' | 'tutor'>('quiz');
+
+  // Extract topics from generated code for the tutor
+  const codeTopics = useMemo(() => {
+    if (!generatedCode?.code) return [];
+    return extractTopicsFromCode(generatedCode.code);
+  }, [generatedCode?.code]);
 
   const handleGenerate = useCallback(async (prompt: string) => {
     setStatus('generating');
@@ -157,7 +164,10 @@ export default function Index() {
               </TabsContent>
               
               <TabsContent value="tutor" className="flex-1 mt-0">
-                <VoiceTutorPanel />
+                <VoiceTutorPanel 
+                  code={generatedCode?.code || ''}
+                  topics={codeTopics}
+                />
               </TabsContent>
             </Tabs>
           </div>
