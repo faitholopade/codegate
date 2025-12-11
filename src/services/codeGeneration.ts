@@ -1,22 +1,25 @@
 import { API_CONFIG } from '@/config/api';
 import { GeneratedCode, CodeBlock } from '@/types';
 
-// Generate code using OpenAI (or BLACKBOX if configured)
+// Generate code using Claude
 export async function generateCode(featurePrompt: string): Promise<GeneratedCode> {
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${API_CONFIG.OPENAI_API_KEY}`,
+      'x-api-key': API_CONFIG.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
       'Content-Type': 'application/json',
+      'anthropic-dangerous-direct-browser-access': 'true',
     },
     body: JSON.stringify({
-      model: 'gpt-4o',
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 4096,
       messages: [
         {
-          role: 'system',
+          role: 'user',
           content: `You are an expert code generator. Generate clean, production-ready code based on the user's feature request.
           
-Return your response in the following JSON format:
+Return your response in the following JSON format (and nothing else, just the JSON):
 {
   "code": "the complete code implementation",
   "language": "the programming language used",
@@ -34,24 +37,30 @@ Break the code into 2-4 logical blocks that can be tested for understanding.
 Make questions specific and technical, like:
 - "What happens if the user input is empty?"
 - "How does this function handle errors?"
-- "What security consideration is addressed here?"`
-        },
-        {
-          role: 'user',
-          content: `Generate code for the following feature: ${featurePrompt}`
+- "What security consideration is addressed here?"
+
+Generate code for the following feature: ${featurePrompt}`
         }
       ],
-      response_format: { type: "json_object" },
-      temperature: 0.7,
     }),
   });
 
   if (!response.ok) {
+    const error = await response.text();
+    console.error('Claude API error:', error);
     throw new Error('Failed to generate code');
   }
 
   const data = await response.json();
-  const result = JSON.parse(data.choices[0].message.content);
+  const content = data.content[0].text;
+  
+  // Parse the JSON from Claude's response
+  const jsonMatch = content.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    throw new Error('Failed to parse code generation response');
+  }
+  
+  const result = JSON.parse(jsonMatch[0]);
   
   return {
     code: result.code,
@@ -65,25 +74,29 @@ Make questions specific and technical, like:
 
 // Analyze code blocks for quiz questions
 export async function analyzeCodeBlock(code: string, explanation: string): Promise<string> {
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${API_CONFIG.OPENAI_API_KEY}`,
+      'x-api-key': API_CONFIG.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
       'Content-Type': 'application/json',
+      'anthropic-dangerous-direct-browser-access': 'true',
     },
     body: JSON.stringify({
-      model: 'gpt-4o-mini',
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 256,
       messages: [
         {
-          role: 'system',
-          content: 'Generate a single, specific technical question to test if a developer understands this code block. The question should be answerable in 1-2 sentences.'
-        },
-        {
           role: 'user',
-          content: `Code:\n${code}\n\nExpected understanding:\n${explanation}`
+          content: `Generate a single, specific technical question to test if a developer understands this code block. The question should be answerable in 1-2 sentences.
+
+Code:
+${code}
+
+Expected understanding:
+${explanation}`
         }
       ],
-      temperature: 0.7,
     }),
   });
 
@@ -92,7 +105,7 @@ export async function analyzeCodeBlock(code: string, explanation: string): Promi
   }
 
   const data = await response.json();
-  return data.choices[0].message.content;
+  return data.content[0].text;
 }
 
 // Evaluate user's explanation
@@ -101,30 +114,36 @@ export async function evaluateExplanation(
   expectedExplanation: string,
   userExplanation: string
 ): Promise<{ score: number; feedback: string; passed: boolean }> {
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${API_CONFIG.OPENAI_API_KEY}`,
+      'x-api-key': API_CONFIG.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
       'Content-Type': 'application/json',
+      'anthropic-dangerous-direct-browser-access': 'true',
     },
     body: JSON.stringify({
-      model: 'gpt-4o-mini',
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 256,
       messages: [
         {
-          role: 'system',
+          role: 'user',
           content: `You are evaluating a developer's understanding of code. Score their explanation from 0-100.
           
-Return JSON: { "score": number, "feedback": "brief feedback", "passed": boolean }
+Return ONLY a JSON object: { "score": number, "feedback": "brief feedback", "passed": boolean }
 
-Pass threshold is 70. Be fair but rigorous - they should demonstrate actual understanding, not just repeat keywords.`
-        },
-        {
-          role: 'user',
-          content: `Code:\n${code}\n\nExpected understanding:\n${expectedExplanation}\n\nDeveloper's explanation:\n${userExplanation}`
+Pass threshold is 70. Be fair but rigorous - they should demonstrate actual understanding, not just repeat keywords.
+
+Code:
+${code}
+
+Expected understanding:
+${expectedExplanation}
+
+Developer's explanation:
+${userExplanation}`
         }
       ],
-      response_format: { type: "json_object" },
-      temperature: 0.3,
     }),
   });
 
@@ -133,5 +152,13 @@ Pass threshold is 70. Be fair but rigorous - they should demonstrate actual unde
   }
 
   const data = await response.json();
-  return JSON.parse(data.choices[0].message.content);
+  const content = data.content[0].text;
+  
+  // Parse JSON from response
+  const jsonMatch = content.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    throw new Error('Failed to parse evaluation response');
+  }
+  
+  return JSON.parse(jsonMatch[0]);
 }
