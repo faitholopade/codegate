@@ -79,7 +79,7 @@ export default function Index() {
               >
                 <Github className="w-5 h-5" />
               </a>
-              <UserNav />
+              <UserNav isAuthEnabled={!!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY} />
             </div>
           </div>
         </div>

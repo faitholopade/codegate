@@ -36,7 +36,9 @@ export function AuthGuard({ children }: AuthGuardProps) {
   );
 }
 
-export function UserNav() {
+export function UserNav({ isAuthEnabled }: { isAuthEnabled: boolean }) {
+  if (!isAuthEnabled) return null;
+  
   return (
     <SignedIn>
       <UserButton 
