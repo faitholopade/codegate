@@ -32,6 +32,7 @@ export function VoiceQuizPanel({
     onConnect: () => {
       console.log('Connected to ElevenLabs');
       onStatusChange('quizzing');
+      addTranscriptEntry('agent', "Connected! The agent should start speaking...");
     },
     onDisconnect: () => {
       console.log('Disconnected from ElevenLabs');
@@ -41,30 +42,39 @@ export function VoiceQuizPanel({
         onStatusChange(passed ? 'passed' : 'failed');
       }
     },
-    onMessage: (message: { source?: string; message?: string }) => {
-      console.log('Message:', message);
+    onMessage: (message: any) => {
+      console.log('ElevenLabs message:', JSON.stringify(message, null, 2));
       
-      // Handle transcript messages from ElevenLabs
-      if (message.source && message.message) {
-        const role = message.source === 'ai' ? 'agent' : 'user';
-        addTranscriptEntry(role, message.message);
-        
-        // Check for pass/fail keywords in agent response
-        if (role === 'agent') {
-          const text = message.message.toLowerCase();
-          if (text.includes('pass')) {
+      // Handle different ElevenLabs event types
+      if (message.type === 'user_transcript' || message.type === 'transcript') {
+        // User's speech was transcribed
+        const text = message.user_transcription_event?.user_transcript || message.text || message.message;
+        if (text) {
+          addTranscriptEntry('user', text);
+        }
+      } else if (message.type === 'agent_response') {
+        // Agent's response
+        const text = message.agent_response_event?.agent_response || message.text || message.message;
+        if (text) {
+          addTranscriptEntry('agent', text);
+          // Check for pass/fail keywords
+          const lowerText = text.toLowerCase();
+          if (lowerText.includes('pass') || lowerText.includes('correct') || lowerText.includes('good job') || lowerText.includes('exactly')) {
             setScore(prev => Math.min(100, prev + 15));
-          } else if (text.includes('fail') || text.includes('incorrect')) {
+          } else if (lowerText.includes('fail') || lowerText.includes('incorrect') || lowerText.includes('not quite')) {
             setScore(prev => Math.max(0, prev - 10));
-          } else if (text.includes('good') || text.includes('correct') || text.includes('exactly')) {
-            setScore(prev => Math.min(100, prev + 10));
           }
         }
+      } else if (message.source && message.message) {
+        // Fallback for older message format
+        const role = message.source === 'ai' ? 'agent' : 'user';
+        addTranscriptEntry(role, message.message);
       }
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('ElevenLabs error:', error);
-      addTranscriptEntry('agent', 'Connection error. Please try again.');
+      const errorMsg = typeof error === 'string' ? error : error?.message || 'Connection failed';
+      addTranscriptEntry('agent', `Error: ${errorMsg}. Make sure your ElevenLabs agent has "Override" enabled in the agent settings.`);
     },
   });
 
