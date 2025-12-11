@@ -99,7 +99,10 @@ export function VoiceQuizPanel({
       );
 
       if (!signedUrlResponse.ok) {
-        throw new Error('Failed to get signed URL');
+        if (signedUrlResponse.status === 404) {
+          throw new Error('Invalid Agent ID. Create an agent at elevenlabs.io/app/conversational-ai and update VITE_ELEVENLABS_AGENT_ID');
+        }
+        throw new Error('Failed to connect to ElevenLabs');
       }
 
       const { signed_url } = await signedUrlResponse.json();
