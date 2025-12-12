@@ -39,17 +39,17 @@ agents:
 ### 1. Voice Quiz Agent
 
 A "gatekeeper" that verbally interrogates developers before allowing
-code approval.\
-It asks targeted questions about: - Logic and underlying reasoning\
-- Edge cases and risk factors\
+code approval.
+It asks targeted questions about: - Logic and underlying reasoning
+- Edge cases and risk factors
 - Implementation details and design decisions
 
 ### 2. Voice Tutor Agent
 
 A personalized voice-based instructor that delivers short, focused
-explanations of code concepts.\
-It adapts its teaching to: - The submitted code\
-- The developer's level\
+explanations of code concepts.
+It adapts its teaching to: - The submitted code
+- The developer's level
 - The specific topic requested
 
 ------------------------------------------------------------------------
@@ -57,14 +57,14 @@ It adapts its teaching to: - The submitted code\
 ## Technical Architecture
 
 -   **ElevenLabs Conversational AI**: Real-time voice-to-voice
-    interaction with dynamic prompt injection\
+    interaction with dynamic prompt injection
 -   **Claude (Anthropic)**: Code analysis, question generation, and
-    adaptive instructional content\
+    adaptive instructional content
 -   **OpenAI**: Concept grounding and rationale-preserving prompt
-    structure\
--   **Lovable**: Rapid frontend scaffolding\
--   **Clerk**: Authentication and secure user identity\
--   **React + TypeScript**: Stable, type-safe interface\
+    structure
+-   **Lovable**: Rapid frontend scaffolding
+-   **Clerk**: Authentication and secure user identity
+-   **React + TypeScript**: Stable, type-safe interface
 -   **Dynamic Prompt Engineering**: Runtime context assembly for nuanced
     agent behaviour
 
@@ -77,9 +77,9 @@ organizations incur significant technical debt when teams approve code
 they do not fully understand. Industry estimates place this burden at
 over **\$50 billion annually**.
 
-Use cases include: - Engineering teams requiring structured review\
-- Universities and bootcamps teaching programming\
-- Enterprises conducting compliance or audit-driven assessments\
+Use cases include: - Engineering teams requiring structured review
+- Universities and bootcamps teaching programming
+- Enterprises conducting compliance or audit-driven assessments
 - AI-augmented developers maintaining long-term competence
 
 ------------------------------------------------------------------------
@@ -94,5 +94,5 @@ Code Gatekeeper transforms code generation into an interactive,
 comprehension‑driven process. It reframes conversational agents as
 protectors of understanding rather than mere assistants.
 
-It is not only a tool that talks back.\
+It is not only a tool that talks back.
 It is a tool that ensures developers can talk back, too.
