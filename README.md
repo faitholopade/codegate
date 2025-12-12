@@ -1,65 +1,98 @@
 # Code Gatekeeper
 
-Code Gatekeeper is a conversational AI platform that transforms how developers learn and retain understanding of AI-generated code—addressing the critical **"AI Paradox"** where increased code production leads to decreased comprehension and critical thinking skills.
+### Submission for the ElevenLabs Worldwide Hackathon
 
----
+Code Gatekeeper is a conversational AI platform designed to restore
+depth, comprehension, and critical thinking to software development in
+an era of rapidly accelerating AI assistance.
 
-## 🚀 Core Functionality & Working Prototype
+Since the launch of ChatGPT in November 2022, developers have gained
+unprecedented productivity. Yet this shift introduced what we refer to
+as the **AI Paradox**: as AI systems generate more code, the average
+developer's understanding of that code often decreases. This mirrors
+concerns raised in *The Social Dilemma* and *The Great Hack*, which
+highlight how powerful technologies can reshape human behaviour,
+attention, and autonomy faster than society adapts.
 
-Our fully functional prototype features two sophisticated ElevenLabs Conversational Agents:
+Code Gatekeeper was built to directly confront this emerging problem.
 
-### **1. Voice Quiz Agent**
-Acts as a “code gatekeeper” that verbally quizzes developers on AI-generated code before allowing approval.  
-It asks probing questions about:
-- Logic  
-- Edge cases  
-- Implementation details  
+------------------------------------------------------------------------
 
-### **2. Voice Tutor Agent**
-Provides personalized, topic-specific voice lectures on code concepts, adapting explanations based on the submitted code context.
+## Purpose
 
----
+Modern AI tools can generate thousands of lines of code in seconds, but
+comprehension and accountability remain fundamentally human
+responsibilities. Code Gatekeeper enforces understanding, not just
+output---helping developers preserve essential skills such as reasoning,
+interrogation, and critical thinking before approving AI-generated code.
 
-## 🧠 Technical Complexity & Multimodal Orchestration
+This project embodies OpenAI's call for AI systems that augment, rather
+than erode, human abilities.
 
-- **ElevenLabs Conversational AI** — Real‑time voice‑to‑voice interaction with dynamic prompt injection  
-- **Claude AI (Anthropic)** — Intelligent code analysis, question generation, and educational content creation  
-- **Clerk Authentication** — Secure user management and session handling  
-- **React + TypeScript** — Modern, type‑safe frontend architecture  
-- **Dynamic Prompt Engineering** — Runtime context injection for personalized agent behavior  
+------------------------------------------------------------------------
 
----
+## Core Functionality
 
-## 💡 Innovation & Creativity
+The working prototype includes two operational ElevenLabs conversational
+agents:
 
-Unlike traditional code review tools, Code Gatekeeper uses **voice-based Socratic dialogue** to ensure developers genuinely understand code before shipping.
+### 1. Voice Quiz Agent
 
-This groundbreaking approach:
+A "gatekeeper" that verbally interrogates developers before allowing
+code approval.\
+It asks targeted questions about: - Logic and underlying reasoning\
+- Edge cases and risk factors\
+- Implementation details and design decisions
 
-- Forces **active recall** through verbal explanation  
-- Creates **accountability** in AI-assisted development  
-- Preserves **human critical thinking** skills in the age of AI  
+### 2. Voice Tutor Agent
 
----
+A personalized voice-based instructor that delivers short, focused
+explanations of code concepts.\
+It adapts its teaching to: - The submitted code\
+- The developer's level\
+- The specific topic requested
 
-## 🌍 Real-World Impact
+------------------------------------------------------------------------
 
-Addressing a **$50B+ problem** in enterprise software: technical debt from poorly understood code.
+## Technical Architecture
 
-Scalable to:
+-   **ElevenLabs Conversational AI**: Real-time voice-to-voice
+    interaction with dynamic prompt injection\
+-   **Claude (Anthropic)**: Code analysis, question generation, and
+    adaptive instructional content\
+-   **OpenAI**: Concept grounding and rationale-preserving prompt
+    structure\
+-   **Lovable**: Rapid frontend scaffolding\
+-   **Clerk**: Authentication and secure user identity\
+-   **React + TypeScript**: Stable, type-safe interface\
+-   **Dynamic Prompt Engineering**: Runtime context assembly for nuanced
+    agent behaviour
 
-- Engineering teams requiring code comprehension gates  
-- Educational institutions teaching programming  
-- Bootcamps ensuring genuine skill development  
-- Enterprise compliance environments requiring code understanding audits  
+------------------------------------------------------------------------
 
----
+## Why This Matters
 
-## 🎤 Theme Alignment
+Code Gatekeeper addresses a growing real-world challenge: large
+organizations incur significant technical debt when teams approve code
+they do not fully understand. Industry estimates place this burden at
+over **\$50 billion annually**.
 
-Code Gatekeeper **exemplifies conversational agents** by unifying voice, browser, and AI APIs into a cohesive autonomous assistant that listens, reasons, responds, and evolves—perfectly embodying the hackathon mission to:
+Use cases include: - Engineering teams requiring structured review\
+- Universities and bootcamps teaching programming\
+- Enterprises conducting compliance or audit-driven assessments\
+- AI-augmented developers maintaining long-term competence
 
-> **“Build something that talks back.”**
+------------------------------------------------------------------------
 
----
+## Alignment with the Hackathon Theme
 
+The ElevenLabs Worldwide Hackathon challenges participants to build
+systems that authentically converse---systems that listen, reason, and
+respond.
+
+Code Gatekeeper transforms code generation into an interactive,
+comprehension‑driven process. It reframes conversational agents as
+protectors of understanding rather than mere assistants.
+
+It is not only a tool that talks back.\
+It is a tool that ensures developers can talk back, too.
