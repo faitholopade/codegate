@@ -1,6 +1,6 @@
 # Code Gatekeeper
 
-### Submission for the ElevenLabs Worldwide Hackathon
+### Submission for the ElevenLabs Worldwide Hackathon: https://hackathon.elevenlabs.io/
 
 Code Gatekeeper is a conversational AI platform designed to restore
 depth, comprehension, and critical thinking to software development in
