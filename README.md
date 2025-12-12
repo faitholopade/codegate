@@ -23,7 +23,7 @@ Code Gatekeeper was built to directly confront this emerging problem.
 Modern AI tools can generate thousands of lines of code in seconds, but
 comprehension and accountability remain fundamentally human
 responsibilities. Code Gatekeeper enforces understanding, not just
-output---helping developers preserve essential skills such as reasoning,
+output helping developers preserve essential skills such as reasoning,
 interrogation, and critical thinking before approving AI-generated code.
 
 This project embodies OpenAI's call for AI systems that augment, rather
@@ -48,7 +48,8 @@ It asks targeted questions about: - Logic and underlying reasoning
 
 A personalized voice-based instructor that delivers short, focused
 explanations of code concepts.
-It adapts its teaching to: - The submitted code
+It adapts its teaching to: 
+- The submitted code
 - The developer's level
 - The specific topic requested
 
@@ -57,17 +58,12 @@ It adapts its teaching to: - The submitted code
 ## Technical Architecture
 
 -   **ElevenLabs Conversational AI**: Real-time voice-to-voice
-    interaction with dynamic prompt injection
+    interaction 
 -   **Claude (Anthropic)**: Code analysis, question generation, and
     adaptive instructional content
--   **OpenAI**: Concept grounding and rationale-preserving prompt
-    structure
--   **Lovable**: Rapid frontend scaffolding
--   **Clerk**: Authentication and secure user identity
--   **React + TypeScript**: Stable, type-safe interface
--   **Dynamic Prompt Engineering**: Runtime context assembly for nuanced
-    agent behaviour
-
+-   **Lovable**: Frontend scaffolding
+-   **Clerk**: Authentication
+-   
 ------------------------------------------------------------------------
 
 ## Why This Matters
@@ -77,7 +73,8 @@ organizations incur significant technical debt when teams approve code
 they do not fully understand. Industry estimates place this burden at
 over **\$50 billion annually**.
 
-Use cases include: - Engineering teams requiring structured review
+Use cases include: 
+- Engineering teams requiring structured review
 - Universities and bootcamps teaching programming
 - Enterprises conducting compliance or audit-driven assessments
 - AI-augmented developers maintaining long-term competence
@@ -96,3 +93,10 @@ protectors of understanding rather than mere assistants.
 
 It is not only a tool that talks back.
 It is a tool that ensures developers can talk back, too.
+
+## Team
+
+Built by:
+- [Martha Ryan](https://www.linkedin.com/in/martharyantcd/)
+- [Faith Olopade](https://www.linkedin.com/in/faitholopade/)
+- [Leah Weldon](https://www.linkedin.com/in/leahweldon/)
